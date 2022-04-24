@@ -2,7 +2,7 @@
 A face attendance registering program with a voice over.
 
 ## Required Modules
-Download them using this command: pip install <module name>
+Download them using this command: pip install "module name"
 
 cmake
 dlib
