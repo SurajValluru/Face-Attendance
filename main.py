@@ -52,6 +52,7 @@ capture = cv2.VideoCapture(0)
 while True:
     success, img = capture.read()
     if success:
+        check = True
         imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
         face = face_recognition.face_locations(imgS)
         encoded_face = face_recognition.face_encodings(imgS)
@@ -61,13 +62,16 @@ while True:
             face_distance = face_recognition.face_distance(
                 knownEncodings, enFc)
             matchIndex = np.argmin(face_distance)
-
+            y1, x2, y2, x1 = fcLoc
             if matches[matchIndex]:
                 name = people[matchIndex].upper()
-                print(name)
-                y1, x2, y2, x1 = fcLoc
                 boxTxt(img, name, (0, 255, 0))
-                attendance(name)
+            else:
+                boxTxt(img)
+                check = False
+        if check:
+            attendance(name)
+
         key = cv2.waitKey(1)
 
         if key == 27:
