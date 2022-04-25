@@ -1,14 +1,9 @@
 # Face Attendance
-A face attendance registering program with a voice over.
+Face Attendance registering program with a voice over.
 
 ## Required Modules
 Download them using this command: pip install "module name"
 
-cmake
-dlib
-face-recognition
-numpy
-opencv-python
-pyttsx3
+cmake, dlib, face-recognition, numpy, opencv-python, pyttsx3
 
-To install dlib module, you'll need Visual Studio C Compiler
+To install dlib module, you'll need Visual Studio C++ Compiler
