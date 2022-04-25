@@ -13,6 +13,13 @@ def encodings(images):
     return encodeList
 
 
+def boxTxt(img, name='Unknown', color=(0, 0, 255)):
+    cv2.rectangle(img, (x1*4, y1*4), (x2*4, y2*4), color, 2)
+    cv2.rectangle(img, (x1*4, y2*4-35), (x2*4, y2*4), color, cv2.FILLED)
+    cv2.putText(img, name, (x1*4+6, y2*4-6),
+                cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+
+
 def attendance(name):
     with open('Attendance.csv', 'r+') as report:
         data = report.readlines()
@@ -59,12 +66,7 @@ while True:
                 name = people[matchIndex].upper()
                 print(name)
                 y1, x2, y2, x1 = fcLoc
-                cv2.rectangle(img, (x1*4, y1*4),
-                              (x2*4, y2*4), (255, 0, 255), 2)
-                cv2.rectangle(img, (x1*4, y2*4-35),
-                              (x2*4, y2*4), (100, 0, 150), -1)
-                cv2.putText(img, name, (x1*4+6, y2*4-6),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+                boxTxt(img, name, (0, 255, 0))
                 attendance(name)
         key = cv2.waitKey(1)
 
