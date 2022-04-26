@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 import face_recognition
 import os
 from datetime import datetime
@@ -61,7 +60,9 @@ while True:
             matches = face_recognition.compare_faces(knownEncodings, enFc)
             face_distance = face_recognition.face_distance(
                 knownEncodings, enFc)
-            matchIndex = np.argmin(face_distance)
+            for i in range(len(face_distance)):
+                if min(face_distance) == face_distance[i]:
+                    matchIndex = i
             y1, x2, y2, x1 = fcLoc
             if matches[matchIndex]:
                 name = people[matchIndex].upper()
