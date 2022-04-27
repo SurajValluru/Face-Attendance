@@ -43,8 +43,15 @@ for person in known_faces:
     people.append(os.path.splitext(person)[0])
 print(known_faces)
 
-knownEncodings = encodings(images)
-print('Encoding is completed....')
+try:
+    knownEncodings = encodings(images)
+    print('Encoding is completed....')
+except IndexError:
+    print("Error... \nPossible issues: Provided known pictures' Face is not clear or No Face is Found")
+    exit()
+except:
+    print('Unknown Error Faced....')
+    exit()
 
 capture = cv2.VideoCapture(0)
 
