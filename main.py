@@ -59,6 +59,7 @@ while True:
     success, img = capture.read()
     if success:
         check = True
+        name = 'Unknown'
         imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
         face = face_recognition.face_locations(imgS)
         encoded_face = face_recognition.face_encodings(imgS)
@@ -78,7 +79,8 @@ while True:
                 boxTxt(img)
                 check = False
         if check:
-            attendance(name)
+            if name != 'Unknown':
+                attendance(name)
 
         key = cv2.waitKey(1)
 
