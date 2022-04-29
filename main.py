@@ -25,14 +25,21 @@ def boxTxt(img, name='Unknown', color=(0, 0, 255)):
 def attendance(name):
     with open('Attendance.csv', 'r+') as report:
         data = report.readlines()
-        names = []
+        names = set()
+        dates = set()
         for line in data:
             entry = line.split(',')
-            names.append(entry[0])  # Get all names in record into names list
+            names.add(entry[0])  # Get all names in record into names list
+            try:
+                dates.add(entry[1])
+            except IndexError:
+                pass
+        present = datetime.now()
+        dateTime = present.strftime('%d-%m-%Y,%H:%M:%S')
+        # Add attendance into record
         if name not in names:
-            present = datetime.now()
-            time = present.strftime('%H:%M:%S')
-            # Add name & time into record
+            report.writelines(f'\n{name},{time}')
+        elif name in names and present.strftime('%d-%m-%Y') not in dates:
             report.writelines(f'\n{name},{time}')
 
 
