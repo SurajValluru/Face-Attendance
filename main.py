@@ -46,15 +46,23 @@ def attendance(name):
         if name not in names:
             report.writelines(f'\n{name},{dateTime}')
             attend = name + ", Your attendance is recorded."
-            speak(attend)
         elif name in names and present.strftime('%d-%m-%Y') not in dates:
             report.writelines(f'\n{name},{dateTime}')
             attend = name + ", Your attendance is recorded."
-            speak(attend)
         else:
             attend = name + ", Your attendance is already recorded."
+        if(voice_check):
             speak(attend)
 
+
+voice = input("Do you want voice over? (y/n)").lower()
+if(voice == 'y'):
+    voice_check = True
+elif voice == 'n':
+    voice_check = False
+else:
+    print("Invalid Input...")
+    exit(0)
 
 path = 'known/'
 images = []
@@ -78,13 +86,14 @@ except:
     exit()
 
 capture = cv2.VideoCapture(0)  # Assign object to camera 0
-audio = pyttsx3.init()  # initiate object to speaker
+if voice_check:
+    audio = pyttsx3.init()  # initiate object to speaker
 
 while True:
     # Return 2 variables, if capture was success and the captured image
     success, img = capture.read()
     if success:
-        check = True  # Counter to find if known face found or not
+        bool_known_face = True  # Assume face is known
         name = 'Unknown'  # Define name to default
         # Scale down to reduce system burden
         imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
@@ -106,11 +115,11 @@ while True:
                 boxTxt(img, name, (0, 255, 0))
             else:
                 boxTxt(img)
-                check = False
+                bool_known_face = False
         elif len(face) == 0:
             pass
         else:
-            img = cv2.imread('Multi.jpg')
+            img = cv2.imread('Multi.jpg')  # If multiple faces Detected
             img = cv2.resize(img, (0, 0), None, 0.3, 0.3)
         if len(face) != 0:  # If any face is found
             cv2.imshow('Cam', img)
@@ -119,7 +128,7 @@ while True:
         key = cv2.waitKey(1)  # To record key strokes
         if key == 27:  # If key is 'esc' key
             break
-        if check:
+        if bool_known_face:
             if name != 'Unknown':
                 attendance(name)
     else:
