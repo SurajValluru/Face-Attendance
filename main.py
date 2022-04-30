@@ -2,6 +2,12 @@ import cv2
 import face_recognition
 import os
 from datetime import datetime
+import pyttsx3
+
+
+def speak(text):
+    audio.say(text)
+    audio.runAndWait()
 
 
 def encodings(images):
@@ -38,9 +44,16 @@ def attendance(name):
         dateTime = present.strftime('%d-%m-%Y,%H:%M:%S')
         # Add attendance into record
         if name not in names:
-            report.writelines(f'\n{name},{time}')
+            report.writelines(f'\n{name},{dateTime}')
+            attend = name + ", Your attendance is recorded."
+            speak(attend)
         elif name in names and present.strftime('%d-%m-%Y') not in dates:
-            report.writelines(f'\n{name},{time}')
+            report.writelines(f'\n{name},{dateTime}')
+            attend = name + ", Your attendance is recorded."
+            speak(attend)
+        else:
+            attend = name + ", Your attendance is already recorded."
+            speak(attend)
 
 
 path = 'known/'
@@ -65,6 +78,7 @@ except:
     exit()
 
 capture = cv2.VideoCapture(0)  # Assign object to camera 0
+audio = pyttsx3.init()  # initiate object to speaker
 
 while True:
     # Return 2 variables, if capture was success and the captured image
@@ -77,32 +91,37 @@ while True:
         face = face_recognition.face_locations(imgS)
         encoded_face = face_recognition.face_encodings(imgS)
 
-        for enFc, fcLoc in zip(encoded_face, face):  # For loop to find multiple faces
-            matches = face_recognition.compare_faces(knownEncodings, enFc)
+        # for enFc, fcLoc in zip(encoded_face, face):  # For loop to find multiple faces
+        if len(face) == 1:
+            matches = face_recognition.compare_faces(
+                knownEncodings, encoded_face[0])
             face_distance = face_recognition.face_distance(
-                knownEncodings, enFc)
+                knownEncodings, encoded_face[0])
             for i in range(len(face_distance)):
                 if min(face_distance) == face_distance[i]:
                     matchIndex = i  # Find corresding matched faces index
-            y1, x2, y2, x1 = fcLoc
+            y1, x2, y2, x1 = face[0]
             if matches[matchIndex]:
                 name = people[matchIndex]
                 boxTxt(img, name, (0, 255, 0))
             else:
                 boxTxt(img)
                 check = False
-        if check:
-            if name != 'Unknown':
-                attendance(name)
-
-        key = cv2.waitKey(1)  # To record key strokes
-
-        if key == 27:  # If key is 'esc' key
-            break
+        elif len(face) == 0:
+            pass
+        else:
+            img = cv2.imread('Multi.jpg')
+            img = cv2.resize(img, (0, 0), None, 0.3, 0.3)
         if len(face) != 0:  # If any face is found
             cv2.imshow('Cam', img)
         else:
             cv2.destroyAllWindows()
+        key = cv2.waitKey(1)  # To record key strokes
+        if key == 27:  # If key is 'esc' key
+            break
+        if check:
+            if name != 'Unknown':
+                attendance(name)
     else:
         print('Please check your Cam...')
         break
